@@ -1,49 +1,58 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class ThemeController extends Controller
 {
-    // Mengatur gambar background
+
+    public function getBackgroundUrl()
+    {
+        $path = 'backgrounds/' . 'background_image.jpg';
+        // Menggunakan APP_URL dan path yang benar
+        $url = env('APP_URL') . '/storage/' . $path;
+
+        return response()->json(['url' => $url]);
+    }
+
+    // Menampilkan URL logo
+    public function getLogoUrl()
+    {
+        $path = 'logos/' . 'logo.png';
+        // Menggunakan APP_URL dan path yang benar
+        $url = env('APP_URL') . '/storage/' . $path;
+
+        return response()->json(['url' => $url]);
+    }
+
     public function setBackground(Request $request)
     {
-        // Lakukan penyimpanan gambar atau pengaturan lainnya sesuai permintaan
+        // Validasi input
         $request->validate([
-            'background_image' => 'required|image',
+            'background_image' => 'required|image|mimes:jpeg,png,jpg',
         ]);
 
-        // Simpan gambar background sesuai permintaan
+        // Simpan gambar background
         $path = $request->file('background_image')->store('public/backgrounds');
 
-        return response()->json(['message' => 'Background image updated', 'path' => $path]);
+        // Kembalikan response dengan struktur yang benar
+        return response()->json(['success' => true, 'message' => 'Background image updated', 'path' => $path]);
     }
 
-    // Mengatur logo
     public function setLogo(Request $request)
     {
-        // Lakukan penyimpanan logo sesuai permintaan
+        // Validasi input
         $request->validate([
-            'logo' => 'required|image',
+            'logo' => 'required|image|mimes:jpeg,png,jpg',
         ]);
 
-        // Simpan logo sesuai permintaan
+        // Simpan logo
         $path = $request->file('logo')->store('public/logos');
 
-        return response()->json(['message' => 'Logo updated', 'path' => $path]);
+        // Kembalikan response dengan struktur yang benar
+        return response()->json(['success' => true, 'message' => 'Logo updated', 'path' => $path]);
     }
 
-    // Mengatur menu
-    public function setMenu(Request $request)
-    {
-        // Lakukan penyimpanan pengaturan menu sesuai permintaan
-        $request->validate([
-            'menu_items' => 'required|array',
-        ]);
 
-        // Proses pengaturan menu (misalnya, simpan ke database atau file konfigurasi)
-        // Berikut hanya contoh respons
-        return response()->json(['message' => 'Menu updated successfully']);
-    }
 }
